@@ -1,15 +1,139 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pride & Prejudice: The Disney Universe Bracket</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh;
+    background: #FBF5E8;
+    font-family: 'Lora', Georgia, serif;
+    color: #2C1810;
+    padding: 24px 16px;
+  }
+  .title-block { text-align: center; margin-bottom: 28px; }
+  .title-block .sub { font-size: 13px; color: #C5963A; letter-spacing: 4px; margin-bottom: 6px; text-transform: uppercase; }
+  .title-block h1 { font-family: 'Playfair Display', Georgia, serif; font-size: 30px; font-weight: 700; line-height: 1.2; color: #2C1810; }
+  .title-block .orn { font-size: 14px; color: #8B6914; margin-top: 6px; letter-spacing: 2px; }
 
-function useFonts() {
-  useEffect(() => {
-    const link = document.createElement('link');
-    link.href = 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap';
-    link.rel = 'stylesheet';
-    document.head.appendChild(link);
-    return () => document.head.removeChild(link);
-  }, []);
-}
+  .card {
+    background: #FFFDF7; border-radius: 14px; padding: 32px 28px;
+    box-shadow: 0 2px 20px rgba(44,24,16,0.08), 0 1px 4px rgba(44,24,16,0.04);
+    border: 1px solid #E8DCC8; max-width: 600px; margin: 0 auto;
+  }
 
+  .progress-wrap { width: 100%; max-width: 500px; margin: 0 auto 28px; }
+  .progress-labels { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px; color: #8B7355; letter-spacing: 1px; }
+  .progress-bg { height: 6px; background: #E8DCC8; border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #8B6914, #C5963A); border-radius: 3px; transition: width 0.4s ease; }
+
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; padding: 3px 10px; border-radius: 20px;
+  }
+  .badge-f { background: #F3E5EC; color: #8B3A5E; }
+  .badge-m { background: #E2EAF2; color: #2E5077; }
+  .badge-wealth {
+    display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px;
+    border-radius: 20px; background: #FFF3D6; color: #8B6914; margin-left: 8px; letter-spacing: 1px;
+  }
+  .badge-wealth .wl { font-weight: 400; font-size: 11px; }
+
+  .char-name { font-family: 'Playfair Display', Georgia, serif; font-size: 26px; margin: 0 0 16px; font-weight: 700; }
+  .char-name-f { color: #8B3A5E; }
+  .char-name-m { color: #2E5077; }
+
+  .text-input {
+    width: 100%; padding: 14px 16px; font-size: 16px; border: 2px solid #E8DCC8;
+    border-radius: 10px; background: #FFFDF7; color: #2C1810; outline: none;
+    font-family: 'Lora', Georgia, serif; transition: border-color 0.2s;
+  }
+  .text-input:focus { border-color: #C5963A; }
+
+  .btn-gold {
+    width: 100%; padding: 14px; font-size: 16px; font-weight: 600;
+    background: linear-gradient(135deg, #8B6914, #C5963A); color: #FFF;
+    border: none; border-radius: 10px; cursor: pointer;
+    font-family: 'Lora', Georgia, serif; letter-spacing: 1px; transition: all 0.2s;
+  }
+  .btn-gold:disabled { background: #D5CABC; cursor: default; }
+
+  .btn-option {
+    padding: 14px 18px; font-size: 15px; border: 2px solid #E8DCC8;
+    border-radius: 10px; cursor: pointer; text-align: left; width: 100%;
+    background: #FFFDF7; color: #2C1810; font-family: 'Lora', Georgia, serif;
+    transition: all 0.15s; margin-bottom: 10px;
+  }
+  .btn-option:hover { border-color: #C5963A; background: #FFF9ED; }
+  .btn-option.yours { border-color: #C5963A; background: #FFF9ED; }
+
+  .bullet { font-size: 14px; line-height: 1.7; color: #3D2E1F; margin: 6px 0; padding-left: 6px; }
+  .bullet-dot { color: #C5963A; margin-right: 8px; }
+
+  .guess-reminder {
+    background: #F8F2E4; border-radius: 8px; padding: 10px 14px; margin-bottom: 20px;
+    font-size: 13px; color: #5C4A32; border: 1px solid #E8DCC8;
+  }
+  .guess-reminder strong { color: #8B6914; }
+
+  .match-grid { display: grid; grid-template-columns: 1fr 40px 1fr; align-items: start; }
+  .match-col { display: flex; flex-direction: column; gap: 10px; }
+  .match-col-title { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; text-align: center; margin-bottom: 4px; font-weight: 700; }
+
+  .match-btn {
+    padding: 10px 12px; font-size: 14px; border: 2px solid #E8DCC8;
+    border-radius: 10px; cursor: pointer; text-align: left; width: 100%;
+    background: #FFFDF7; color: #2C1810; font-family: 'Lora', Georgia, serif;
+    transition: all 0.15s;
+  }
+  .match-btn.selected { border-color: #8B3A5E; background: #F3E5EC; }
+  .match-btn.paired { border-color: #C5963A; background: #FFF9ED; }
+  .match-btn.dim { opacity: 0.7; cursor: default; }
+  .match-btn .mname { font-weight: 600; font-size: 13px; }
+  .match-btn .msub { font-size: 11px; color: #8B7355; margin-top: 2px; }
+  .match-btn .mpair { font-size: 11px; font-weight: 600; margin-top: 3px; }
+  .match-btn .mpair-w { color: #8B6914; }
+  .match-btn .mpair-m { color: #8B3A5E; }
+  .match-btn .wealth-inline { font-size: 11px; color: #8B6914; font-weight: 700; margin-left: 6px; }
+
+  .connector { display: flex; align-items: center; justify-content: center; height: 100%; padding-top: 30px; }
+  .connector-heart { font-size: 20px; color: #C5963A; }
+
+  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #F0E6D4; }
+  .summary-row .sname { font-weight: 600; font-size: 14px; }
+  .summary-row .schoice { font-size: 14px; color: #8B6914; }
+  .summary-row .swealth { color: #8B6914; font-size: 12px; }
+
+  .pair-row { text-align: center; padding: 8px 0; font-size: 15px; }
+  .pair-row .pw { color: #8B3A5E; font-weight: 600; }
+  .pair-row .pamp { color: #C5963A; margin: 0 10px; }
+  .pair-row .pm { color: #2E5077; font-weight: 600; }
+
+  .section-title { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; margin-bottom: 12px; text-align: center; }
+
+  .btn-outline {
+    padding: 10px 24px; font-size: 13px; background: transparent;
+    color: #8B7355; border: 1px solid #D5CABC; border-radius: 8px;
+    cursor: pointer; font-family: 'Lora', Georgia, serif;
+  }
+
+  .fade { transition: opacity 0.25s ease; }
+  .fade-out { opacity: 0; }
+  .fade-in { opacity: 1; }
+
+  .container { max-width: 600px; margin: 0 auto; }
+  .container-wide { max-width: 720px; margin: 0 auto; }
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<canvas id="screenshotCanvas" style="display:none;"></canvas>
+
+<script>
 const WOMEN = [
   {
     id: 'elizabeth', name: 'Elizabeth Bennet', role: 'Second Eldest Sister',
@@ -18,7 +142,7 @@ const WOMEN = [
       'Second of five sisters in a family of modest means',
       'Sharpest mind in any room with a quick tongue',
       'Forms strong first impressions that aren\'t always correct',
-      'Refuses to marry for anything less than genuine love and respect',
+      'Refuses to marry for anything less than genuine love and respect'
     ],
     options: ['Belle (Beauty & the Beast)', 'Mulan']
   },
@@ -29,7 +153,7 @@ const WOMEN = [
       'Eldest and most beautiful of five sisters',
       'Unfailingly kind, gracious, and trusting (sometimes too trusting)',
       'Hides her deepest feelings behind quiet composure',
-      'Believes the best about everyone, even when the evidence says otherwise',
+      'Believes the best about everyone, even when the evidence says otherwise'
     ],
     options: ['Rapunzel (Tangled)', 'Anna (Frozen)']
   },
@@ -40,7 +164,7 @@ const WOMEN = [
       'The overlooked middle sister nobody quite notices',
       'Practices piano constantly (though not well)',
       'Quotes moral philosophy that nobody asked for',
-      'Means well but is completely out of step with everyone around her',
+      'Means well but is completely out of step with everyone around her'
     ],
     options: ['Lisa Simpson (The Simpsons)', 'Mantis (Guardians of the Galaxy)']
   },
@@ -51,7 +175,7 @@ const WOMEN = [
       'Constantly overshadowed by her younger, louder sister Lydia',
       'Has no strong opinions of her own',
       'Cries at the drop of a hat',
-      'Without Lydia around, it\'s unclear who Kitty even is',
+      'Without Lydia around, it\'s unclear who Kitty even is'
     ],
     options: ['Drizella (Cinderella)', 'Young Nala (The Lion King)']
   },
@@ -62,7 +186,7 @@ const WOMEN = [
       'Only fifteen but by far the loudest sister',
       'Obsessed with officers in uniform, parties, and gossip',
       'Acts entirely on impulse with zero thought for consequences',
-      'Makes a reckless decision that nearly destroys her family\'s reputation',
+      'Makes a reckless decision that nearly destroys her family\'s reputation'
     ],
     options: ['Ariel (The Little Mermaid)', 'Tinker Bell (Peter Pan)']
   },
@@ -73,7 +197,7 @@ const WOMEN = [
       'Elizabeth\'s closest friend: intelligent, observant, practical to her core',
       'At twenty-seven, society considers her nearly too old to marry',
       'Has zero romantic illusions about life',
-      'Will choose a comfortable home over love without hesitation',
+      'Will choose a comfortable home over love without hesitation'
     ],
     options: ['Natasha Romanoff (Black Widow)', 'Megara (Hercules)']
   }
@@ -88,7 +212,7 @@ const MEN = [
       'One of the wealthiest men in England',
       'Tall, handsome, immediately noticed at every gathering',
       'His pride and stiffness make a truly terrible first impression',
-      'Those closest to him know he is deeply loyal, generous, and kind',
+      'Those closest to him know he is deeply loyal, generous, and kind'
     ],
     options: ['Tony Stark / Iron Man', 'The Beast (Beauty & the Beast)']
   },
@@ -100,7 +224,7 @@ const MEN = [
       'Warm, open, and instantly likeable without trying',
       'Easily influenced, especially by Darcy and his own sisters',
       'Can be talked out of following his own heart',
-      'Falls in love quickly and completely',
+      'Falls in love quickly and completely'
     ],
     options: ['Peter Parker / Spider-Man', 'Kristoff (Frozen)']
   },
@@ -112,7 +236,7 @@ const MEN = [
       'Grew up near Darcy\'s wealth but never had his own',
       'Tells a heartbreaking story about being wronged by Darcy',
       'Wins over everyone instantly with charm and good looks',
-      'His romantic interest in women tends to follow their money',
+      'His romantic interest in women tends to follow their money'
     ],
     options: ['Loki (Thor / Avengers)', 'Hans (Frozen)']
   },
@@ -124,7 +248,7 @@ const MEN = [
       'Modest income, but will inherit the Bennet family home someday',
       'Talks endlessly about his powerful patroness Lady Catherine de Bourgh',
       'Proposes marriage like a business contract',
-      'Genuinely bewildered when a woman refuses him',
+      'Genuinely bewildered when a woman refuses him'
     ],
     options: ['Gaston (Beauty & the Beast)', 'Cogsworth (Beauty & the Beast)']
   },
@@ -136,667 +260,457 @@ const MEN = [
       'Second son of an earl, so he won\'t inherit the family fortune',
       'Openly admits he must marry a woman with money',
       'Charming, warm, and genuinely good company',
-      'The kind of man everyone wishes could just follow his heart',
+      'The kind of man everyone wishes could just follow his heart'
     ],
     options: ['Lando Calrissian (Star Wars)', 'Poe Dameron (Star Wars)']
   }
 ];
 
 const ALL_CHARS = [...WOMEN, ...MEN];
+const ORN = '\u2726';
 
-const ORN = "\u2726";
+// State
+let state = {
+  phase: 'name',
+  name: '',
+  charIndex: 0,
+  guesses: {},
+  currentGuess: '',
+  choices: {},
+  matchSelections: {},
+  selectedWoman: null,
+  copied: false
+};
 
-function ProgressBar({ current, total, label }) {
-  return (
-    <div style={{ width: '100%', maxWidth: 500, margin: '0 auto 28px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontFamily: "'Lora', Georgia, serif", fontSize: 13, color: '#8B7355', letterSpacing: 1 }}>
-        <span>{label}</span>
-        <span>{current} of {total}</span>
-      </div>
-      <div style={{ height: 6, background: '#E8DCC8', borderRadius: 3, overflow: 'hidden' }}>
-        <div style={{ height: '100%', width: `${(current / total) * 100}%`, background: 'linear-gradient(90deg, #8B6914, #C5963A)', borderRadius: 3, transition: 'width 0.4s ease' }} />
-      </div>
-    </div>
-  );
+function isWoman(idx) { return idx < WOMEN.length; }
+function getManData(idx) { return idx >= WOMEN.length ? MEN[idx - WOMEN.length] : null; }
+
+function titleHTML() {
+  return `
+    <div class="title-block">
+      <div class="sub">Jane Austen's</div>
+      <h1>Pride & Prejudice</h1>
+      <div class="orn">${ORN} The Disney Universe Bracket ${ORN}</div>
+    </div>`;
 }
 
-function Card({ children, style }) {
-  return (
-    <div style={{
-      background: '#FFFDF7', borderRadius: 14, padding: '32px 28px',
-      boxShadow: '0 2px 20px rgba(44,24,16,0.08), 0 1px 4px rgba(44,24,16,0.04)',
-      border: '1px solid #E8DCC8', maxWidth: 600, margin: '0 auto', ...style
-    }}>
-      {children}
-    </div>
-  );
+function progressHTML(current, total, label) {
+  const pct = (current / total) * 100;
+  return `
+    <div class="progress-wrap">
+      <div class="progress-labels"><span>${label}</span><span>${current} of ${total}</span></div>
+      <div class="progress-bg"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>`;
 }
 
-function GenderBadge({ gender }) {
-  const isF = gender === 'f';
-  return (
-    <span style={{
-      display: 'inline-block', fontSize: 11, fontWeight: 700, letterSpacing: 1.5,
-      textTransform: 'uppercase', padding: '3px 10px', borderRadius: 20,
-      background: isF ? '#F3E5EC' : '#E2EAF2', color: isF ? '#8B3A5E' : '#2E5077',
-      fontFamily: "'Lora', Georgia, serif"
-    }}>
-      {isF ? 'Woman' : 'Man'}
-    </span>
-  );
-}
+function render() {
+  const app = document.getElementById('app');
+  const s = state;
 
-function WealthBadge({ wealth, label }) {
-  return (
-    <span style={{
-      display: 'inline-block', fontSize: 12, fontWeight: 700, padding: '3px 10px',
-      borderRadius: 20, background: '#FFF3D6', color: '#8B6914', marginLeft: 8,
-      fontFamily: "'Lora', Georgia, serif", letterSpacing: 1
-    }}>
-      {wealth} <span style={{ fontWeight: 400, fontSize: 11 }}>{label}</span>
-    </span>
-  );
-}
+  if (s.phase === 'name') {
+    app.innerHTML = `
+      <div class="container fade fade-in" style="max-width:480px; margin-top:60px; text-align:center;">
+        ${titleHTML()}
+        <div class="card">
+          <p style="font-size:15px; color:#5C4A32; line-height:1.7; margin-bottom:24px;">
+            You're about to meet the characters of <em>Pride & Prejudice</em>. For each one, you'll guess which Disney character they remind you of, then see if you agree with our picks. Finally, you'll play matchmaker.
+          </p>
+          <input class="text-input" type="text" placeholder="Enter your name..." id="nameInput" value="${s.name}" autofocus>
+          <button class="btn-gold" style="margin-top:20px;" id="nameBtn" ${!s.name.trim() ? 'disabled' : ''}>Enter the Ballroom ${ORN}</button>
+        </div>
+      </div>`;
+    const inp = document.getElementById('nameInput');
+    inp.addEventListener('input', e => { state.name = e.target.value; document.getElementById('nameBtn').disabled = !e.target.value.trim(); });
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter' && state.name.trim()) transition(() => { state.phase = 'intro'; }); });
+    document.getElementById('nameBtn').addEventListener('click', () => { if (state.name.trim()) transition(() => { state.phase = 'intro'; }); });
+    inp.focus();
+    return;
+  }
 
-export default function App() {
-  useFonts();
-  const [phase, setPhase] = useState('name');
-  const [name, setName] = useState('');
-  const [charIndex, setCharIndex] = useState(0);
-  const [guesses, setGuesses] = useState({});
-  const [currentGuess, setCurrentGuess] = useState('');
-  const [choices, setChoices] = useState({});
-  const [matchSelections, setMatchSelections] = useState({});
-  const [selectedWoman, setSelectedWoman] = useState(null);
-  const [fadeIn, setFadeIn] = useState(true);
-  const [copied, setCopied] = useState(false);
-  const canvasRef = useRef(null);
+  if (s.phase === 'intro') {
+    const ch = ALL_CHARS[s.charIndex];
+    const iw = isWoman(s.charIndex);
+    app.innerHTML = `
+      <div class="container fade fade-in" style="max-width:540px; margin-top:20px;">
+        ${titleHTML()}
+        ${progressHTML(s.charIndex + 1, ALL_CHARS.length, 'Quick Introductions')}
+        <div class="card">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+            <span class="badge ${iw ? 'badge-f' : 'badge-m'}">${iw ? 'Woman' : 'Man'}</span>
+            <span style="font-size:12px; color:#8B7355;">${ch.role}</span>
+          </div>
+          <h2 class="char-name ${iw ? 'char-name-f' : 'char-name-m'}">${ch.name}</h2>
+          <p style="font-size:16px; line-height:1.8; color:#3D2E1F; margin-bottom:28px; font-style:italic;">
+            &ldquo;${ch.brief}&rdquo;
+          </p>
+          <label style="display:block; font-size:13px; color:#8B7355; margin-bottom:8px; letter-spacing:1px; text-transform:uppercase;">Who does this remind you of?</label>
+          <input class="text-input" type="text" placeholder="Type any character name..." id="guessInput" value="${s.currentGuess}">
+          <button class="btn-gold" style="margin-top:16px; font-size:15px; padding:13px;" id="guessBtn" ${!s.currentGuess.trim() ? 'disabled' : ''}>Next ${ORN}</button>
+        </div>
+      </div>`;
+    const inp = document.getElementById('guessInput');
+    inp.addEventListener('input', e => { state.currentGuess = e.target.value; document.getElementById('guessBtn').disabled = !e.target.value.trim(); });
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') submitGuess(); });
+    document.getElementById('guessBtn').addEventListener('click', submitGuess);
+    inp.focus();
+    return;
+  }
 
-  const triggerTransition = useCallback((cb) => {
-    setFadeIn(false);
-    setTimeout(() => { cb(); setFadeIn(true); }, 250);
-  }, []);
+  if (s.phase === 'detailed') {
+    const ch = ALL_CHARS[s.charIndex];
+    const iw = isWoman(s.charIndex);
+    const md = getManData(s.charIndex);
+    const myGuess = s.guesses[ch.id] || '';
+    const opts = [myGuess, ...ch.options];
 
-  const currentChar = ALL_CHARS[charIndex];
-  const isWoman = charIndex < WOMEN.length;
-  const isMan = !isWoman;
-  const currentManData = isMan ? MEN[charIndex - WOMEN.length] : null;
-
-  const handleNameSubmit = () => {
-    if (name.trim()) triggerTransition(() => setPhase('intro'));
-  };
-
-  const handleGuessSubmit = () => {
-    if (!currentGuess.trim()) return;
-    const updated = { ...guesses, [currentChar.id]: currentGuess.trim() };
-    setGuesses(updated);
-    setCurrentGuess('');
-    if (charIndex < ALL_CHARS.length - 1) {
-      triggerTransition(() => setCharIndex(charIndex + 1));
-    } else {
-      triggerTransition(() => { setCharIndex(0); setPhase('detailed'); });
+    let wealthBadge = '';
+    if (md) {
+      wealthBadge = `<span class="badge-wealth">${md.wealth} <span class="wl">${md.wealthLabel}</span></span>`;
     }
-  };
 
-  const handleChoice = (choice) => {
-    const updated = { ...choices, [currentChar.id]: choice };
-    setChoices(updated);
-    if (charIndex < ALL_CHARS.length - 1) {
-      triggerTransition(() => setCharIndex(charIndex + 1));
-    } else {
-      triggerTransition(() => setPhase('matchmaking'));
-    }
-  };
+    let bulletsHTML = ch.bullets.map(b => `<div class="bullet"><span class="bullet-dot">${ORN}</span>${b}</div>`).join('');
 
-  const handleMatchClick = (womanId, manId) => {
-    const updated = { ...matchSelections };
-    for (const wid of Object.keys(updated)) {
-      if (updated[wid] === manId) delete updated[wid];
-    }
-    if (matchSelections[womanId] === manId) {
-      delete updated[womanId];
-    } else {
-      updated[womanId] = manId;
-    }
-    setMatchSelections(updated);
-  };
+    let optionsHTML = opts.map((opt, i) => {
+      const label = i === 0 ? `<span style="font-size:11px; color:#C5963A; display:block; margin-bottom:3px; letter-spacing:1px;">YOUR GUESS</span>` : '';
+      return `<button class="btn-option ${i === 0 ? 'yours' : ''}" data-choice="${opt.replace(/"/g, '&quot;')}">${label}${opt}</button>`;
+    }).join('');
 
-  const generateScreenshot = async () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const W = 900;
-    const padding = 40;
-    const lineH = 26;
-
-    let totalLines = 0;
-    totalLines += 6;
-    totalLines += 2;
-    totalLines += WOMEN.length * 2 + 2;
-    totalLines += MEN.length * 2 + 2;
-    totalLines += 2;
-    totalLines += Object.keys(matchSelections).length * 2 + 2;
-    const H = Math.max(700, padding * 2 + totalLines * lineH + 80);
-
-    canvas.width = W * 2;
-    canvas.height = H * 2;
-    ctx.scale(2, 2);
-
-    ctx.fillStyle = '#FBF5E8';
-    ctx.fillRect(0, 0, W, H);
-
-    ctx.strokeStyle = '#C5963A';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(16, 16, W - 32, H - 32);
-    ctx.strokeStyle = '#E8DCC8';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(22, 22, W - 44, H - 44);
-
-    let y = padding + 20;
-
-    const drawText = (text, x, size, color, fontStyle, align) => {
-      ctx.fillStyle = color || '#2C1810';
-      ctx.font = `${fontStyle || ''} ${size}px Georgia, serif`.trim();
-      ctx.textAlign = align || 'left';
-      ctx.fillText(text, x, y);
-    };
-
-    drawText('Pride & Prejudice', W / 2, 28, '#2C1810', 'bold', 'center');
-    y += 34;
-    drawText('The Disney Universe Bracket', W / 2, 18, '#8B6914', '', 'center');
-    y += 30;
-    drawText(name, W / 2, 16, '#5C4A32', 'italic', 'center');
-    y += 40;
-
-    ctx.strokeStyle = '#C5963A';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(padding + 40, y);
-    ctx.lineTo(W - padding - 40, y);
-    ctx.stroke();
-    y += 25;
-
-    drawText('\u2726  WOMEN  \u2726', W / 2, 13, '#8B3A5E', 'bold', 'center');
-    y += 28;
-
-    WOMEN.forEach(w => {
-      drawText(w.name, padding + 30, 14, '#2C1810', 'bold', 'left');
-      const choice = choices[w.id] || '(none)';
-      ctx.fillStyle = '#8B6914';
-      ctx.font = '14px Georgia, serif';
-      ctx.textAlign = 'right';
-      ctx.fillText(choice, W - padding - 30, y);
-      y += lineH;
+    app.innerHTML = `
+      <div class="container fade fade-in" style="max-width:580px; margin-top:20px;">
+        ${titleHTML()}
+        ${progressHTML(s.charIndex + 1, ALL_CHARS.length, 'Choose Your Match')}
+        <div class="card">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px; flex-wrap:wrap;">
+            <span class="badge ${iw ? 'badge-f' : 'badge-m'}">${iw ? 'Woman' : 'Man'}</span>
+            <span style="font-size:12px; color:#8B7355;">${ch.role}</span>
+            ${wealthBadge}
+          </div>
+          <h2 class="char-name ${iw ? 'char-name-f' : 'char-name-m'}">${ch.name}</h2>
+          <div style="margin-bottom:24px;">${bulletsHTML}</div>
+          <div class="guess-reminder">Earlier you guessed: <strong>${myGuess}</strong></div>
+          <div style="font-size:13px; color:#8B7355; margin-bottom:14px; letter-spacing:1px; text-transform:uppercase;">Which character is the best match?</div>
+          <div>${optionsHTML}</div>
+        </div>
+      </div>`;
+    document.querySelectorAll('.btn-option').forEach(btn => {
+      btn.addEventListener('click', () => submitChoice(btn.dataset.choice));
     });
-    y += 15;
+    return;
+  }
 
-    drawText('\u2726  MEN  \u2726', W / 2, 13, '#2E5077', 'bold', 'center');
-    y += 28;
+  if (s.phase === 'matchmaking') {
+    const assignedMen = Object.values(s.matchSelections);
+    const pairCount = Object.keys(s.matchSelections).length;
+    const allPaired = pairCount >= 5;
 
-    MEN.forEach(m => {
-      drawText(m.name + '  ' + m.wealth, padding + 30, 14, '#2C1810', 'bold', 'left');
-      const choice = choices[m.id] || '(none)';
-      ctx.fillStyle = '#8B6914';
-      ctx.font = '14px Georgia, serif';
-      ctx.textAlign = 'right';
-      ctx.fillText(choice, W - padding - 30, y);
-      y += lineH;
-    });
-    y += 20;
-
-    ctx.strokeStyle = '#C5963A';
-    ctx.beginPath();
-    ctx.moveTo(padding + 40, y);
-    ctx.lineTo(W - padding - 40, y);
-    ctx.stroke();
-    y += 25;
-
-    drawText('\u2726  MY MATCHMAKING  \u2726', W / 2, 13, '#5C4A32', 'bold', 'center');
-    y += 28;
-
-    WOMEN.forEach(w => {
-      const manId = matchSelections[w.id];
-      const man = MEN.find(m => m.id === manId);
-      if (man) {
-        const pair = w.name + '  &  ' + man.name;
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#2C1810';
-        ctx.font = '14px Georgia, serif';
-        ctx.fillText(pair, W / 2, y);
-        y += lineH;
+    let womenHTML = WOMEN.map(w => {
+      const paired = s.matchSelections[w.id];
+      const isSel = s.selectedWoman === w.id;
+      const disneyMatch = s.choices[w.id] || '';
+      let cls = 'match-btn';
+      if (isSel) cls += ' selected';
+      else if (paired) cls += ' paired';
+      let pairLine = '';
+      if (paired) {
+        const man = MEN.find(m => m.id === paired);
+        pairLine = `<div class="mpair mpair-w">\u2665 ${man ? man.name : ''}</div>`;
       }
+      return `<button class="${cls}" data-woman="${w.id}">
+        <div class="mname">${w.name}</div>
+        <div class="msub">as ${disneyMatch}</div>
+        ${pairLine}
+      </button>`;
+    }).join('');
+
+    let menHTML = MEN.map(m => {
+      const isPaired = assignedMen.includes(m.id);
+      const pairedEntry = Object.entries(s.matchSelections).find(([, v]) => v === m.id);
+      const disneyMatch = s.choices[m.id] || '';
+      let cls = 'match-btn';
+      if (isPaired) cls += ' paired';
+      if (!s.selectedWoman) cls += ' dim';
+      let pairLine = '';
+      if (pairedEntry) {
+        const woman = WOMEN.find(w => w.id === pairedEntry[0]);
+        pairLine = `<div class="mpair mpair-m">\u2665 ${woman ? woman.name : ''}</div>`;
+      }
+      return `<button class="${cls}" data-man="${m.id}">
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span class="mname">${m.name}</span>
+          <span class="wealth-inline">${m.wealth}</span>
+        </div>
+        <div class="msub">as ${disneyMatch}</div>
+        ${pairLine}
+      </button>`;
+    }).join('');
+
+    app.innerHTML = `
+      <div class="container-wide fade fade-in" style="margin-top:20px;">
+        ${titleHTML()}
+        <div style="text-align:center; margin-bottom:24px;">
+          <p style="font-size:15px; color:#5C4A32; line-height:1.7; max-width:500px; margin:0 auto;">
+            Now play matchmaker! Pair each woman with the man you think she'd be best suited for. Click a woman, then click a man to pair them. One woman will be left unmatched.
+          </p>
+        </div>
+        <div class="match-grid">
+          <div class="match-col">
+            <div class="match-col-title" style="color:#8B3A5E;">Women</div>
+            ${womenHTML}
+          </div>
+          <div class="connector"><div class="connector-heart">\u2665</div></div>
+          <div class="match-col">
+            <div class="match-col-title" style="color:#2E5077;">Men</div>
+            ${menHTML}
+          </div>
+        </div>
+        <div style="text-align:center; margin-top:28px;">
+          <div style="font-size:13px; color:#8B7355; margin-bottom:12px;">${pairCount} of 5 pairs made${pairCount >= 5 ? ' \u2713' : ''}</div>
+          <button class="btn-gold" style="width:auto; padding:14px 40px;" id="finishBtn" ${!allPaired ? 'disabled' : ''}>See My Results ${ORN}</button>
+        </div>
+      </div>`;
+
+    document.querySelectorAll('[data-woman]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const wid = btn.dataset.woman;
+        state.selectedWoman = state.selectedWoman === wid ? null : wid;
+        render();
+      });
     });
+    document.querySelectorAll('[data-man]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (!state.selectedWoman) return;
+        doMatch(state.selectedWoman, btn.dataset.man);
+        state.selectedWoman = null;
+        render();
+      });
+    });
+    document.getElementById('finishBtn').addEventListener('click', () => {
+      if (allPaired) transition(() => { state.phase = 'summary'; });
+    });
+    return;
+  }
 
-    const unmatched = WOMEN.filter(w => !matchSelections[w.id]);
-    if (unmatched.length > 0) {
-      y += 8;
-      ctx.textAlign = 'center';
-      ctx.fillStyle = '#8B7355';
-      ctx.font = 'italic 13px Georgia, serif';
-      ctx.fillText('Unmatched: ' + unmatched.map(w => w.name).join(', '), W / 2, y);
+  if (s.phase === 'summary') {
+    const unmatchedWomen = WOMEN.filter(w => !s.matchSelections[w.id]);
+
+    let womenRows = WOMEN.map(w => `
+      <div class="summary-row">
+        <span class="sname">${w.name}</span>
+        <span class="schoice">${s.choices[w.id] || '(none)'}</span>
+      </div>`).join('');
+
+    let menRows = MEN.map(m => `
+      <div class="summary-row">
+        <span class="sname">${m.name} <span class="swealth">${m.wealth}</span></span>
+        <span class="schoice">${s.choices[m.id] || '(none)'}</span>
+      </div>`).join('');
+
+    let pairRows = WOMEN.filter(w => s.matchSelections[w.id]).map(w => {
+      const man = MEN.find(m => m.id === s.matchSelections[w.id]);
+      return `<div class="pair-row"><span class="pw">${w.name}</span><span class="pamp">&</span><span class="pm">${man ? man.name : ''}</span></div>`;
+    }).join('');
+
+    let unmatchedLine = '';
+    if (unmatchedWomen.length > 0) {
+      unmatchedLine = `<div style="text-align:center; font-size:13px; color:#8B7355; font-style:italic; margin-top:8px;">Unmatched: ${unmatchedWomen.map(w => w.name).join(', ')}</div>`;
     }
 
-    try {
-      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
-    } catch {
-      const link = document.createElement('a');
-      link.download = `pride-prejudice-bracket-${name.replace(/\s+/g, '-')}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      setCopied(true);
-      setTimeout(() => setCopied(false), 3000);
-    }
-  };
-
-  const containerStyle = {
-    minHeight: '100vh', background: '#FBF5E8',
-    fontFamily: "'Lora', Georgia, serif", color: '#2C1810',
-    padding: '24px 16px',
-  };
-
-  const fadeStyle = {
-    opacity: fadeIn ? 1 : 0, transition: 'opacity 0.25s ease',
-  };
-
-  const titleBlock = (
-    <div style={{ textAlign: 'center', marginBottom: 28 }}>
-      <div style={{ fontSize: 13, color: '#C5963A', letterSpacing: 4, marginBottom: 6, textTransform: 'uppercase' }}>Jane Austen&apos;s</div>
-      <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 30, fontWeight: 700, margin: 0, lineHeight: 1.2, color: '#2C1810' }}>Pride & Prejudice</h1>
-      <div style={{ fontSize: 14, color: '#8B6914', marginTop: 6, letterSpacing: 2 }}>{ORN} The Disney Universe Bracket {ORN}</div>
-    </div>
-  );
-
-  const bulletStyle = {
-    fontSize: 14, lineHeight: 1.7, color: '#3D2E1F', margin: '6px 0', paddingLeft: 6,
-  };
-
-  // ===================== NAME SCREEN =====================
-  if (phase === 'name') {
-    return (
-      <div style={containerStyle}>
-        <div style={{ maxWidth: 480, margin: '60px auto 0', textAlign: 'center', ...fadeStyle }}>
-          {titleBlock}
-          <Card>
-            <p style={{ fontSize: 15, color: '#5C4A32', lineHeight: 1.7, marginBottom: 24 }}>
-              You&apos;re about to meet the characters of <em>Pride & Prejudice</em>. For each one, you&apos;ll guess which Disney character they remind you of, then see if you agree with our picks. Finally, you&apos;ll play matchmaker.
-            </p>
-            <input
-              type="text" placeholder="Enter your name..." value={name}
-              onChange={e => setName(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleNameSubmit()}
-              style={{
-                width: '100%', padding: '14px 16px', fontSize: 16, border: '2px solid #E8DCC8',
-                borderRadius: 10, background: '#FFFDF7', color: '#2C1810', outline: 'none',
-                fontFamily: "'Lora', Georgia, serif", boxSizing: 'border-box',
-                transition: 'border-color 0.2s',
-              }}
-              onFocus={e => e.target.style.borderColor = '#C5963A'}
-              onBlur={e => e.target.style.borderColor = '#E8DCC8'}
-              autoFocus
-            />
-            <button
-              onClick={handleNameSubmit}
-              disabled={!name.trim()}
-              style={{
-                marginTop: 20, width: '100%', padding: '14px', fontSize: 16, fontWeight: 600,
-                background: name.trim() ? 'linear-gradient(135deg, #8B6914, #C5963A)' : '#D5CABC',
-                color: '#FFF', border: 'none', borderRadius: 10, cursor: name.trim() ? 'pointer' : 'default',
-                fontFamily: "'Lora', Georgia, serif", letterSpacing: 1, transition: 'all 0.2s',
-              }}
-            >
-              Enter the Ballroom {ORN}
-            </button>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
-  // ===================== INTRO PHASE =====================
-  if (phase === 'intro') {
-    return (
-      <div style={containerStyle}>
-        <div style={{ maxWidth: 540, margin: '20px auto 0', ...fadeStyle }}>
-          {titleBlock}
-          <ProgressBar current={charIndex + 1} total={ALL_CHARS.length} label="Quick Introductions" />
-          <Card>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-              <GenderBadge gender={isWoman ? 'f' : 'm'} />
-              <span style={{ fontSize: 12, color: '#8B7355' }}>{currentChar.role}</span>
-            </div>
-            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 26, margin: '0 0 16px', color: isWoman ? '#8B3A5E' : '#2E5077' }}>
-              {currentChar.name}
-            </h2>
-            <p style={{ fontSize: 16, lineHeight: 1.8, color: '#3D2E1F', marginBottom: 28, fontStyle: 'italic' }}>
-              &ldquo;{currentChar.brief}&rdquo;
-            </p>
-            <label style={{ display: 'block', fontSize: 13, color: '#8B7355', marginBottom: 8, letterSpacing: 1, textTransform: 'uppercase' }}>
-              Who does this remind you of?
-            </label>
-            <input
-              type="text"
-              placeholder="Type any character name..."
-              value={currentGuess}
-              onChange={e => setCurrentGuess(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleGuessSubmit()}
-              style={{
-                width: '100%', padding: '14px 16px', fontSize: 16, border: '2px solid #E8DCC8',
-                borderRadius: 10, background: '#FFFDF7', color: '#2C1810', outline: 'none',
-                fontFamily: "'Lora', Georgia, serif", boxSizing: 'border-box',
-              }}
-              onFocus={e => e.target.style.borderColor = '#C5963A'}
-              onBlur={e => e.target.style.borderColor = '#E8DCC8'}
-              autoFocus
-            />
-            <button
-              onClick={handleGuessSubmit}
-              disabled={!currentGuess.trim()}
-              style={{
-                marginTop: 16, width: '100%', padding: '13px', fontSize: 15, fontWeight: 600,
-                background: currentGuess.trim() ? 'linear-gradient(135deg, #8B6914, #C5963A)' : '#D5CABC',
-                color: '#FFF', border: 'none', borderRadius: 10,
-                cursor: currentGuess.trim() ? 'pointer' : 'default',
-                fontFamily: "'Lora', Georgia, serif", letterSpacing: 1,
-              }}
-            >
-              Next {ORN}
-            </button>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
-  // ===================== DETAILED PHASE =====================
-  if (phase === 'detailed') {
-    const myGuess = guesses[currentChar.id] || '';
-    const optionButtons = [myGuess, ...currentChar.options];
-
-    return (
-      <div style={containerStyle}>
-        <div style={{ maxWidth: 580, margin: '20px auto 0', ...fadeStyle }}>
-          {titleBlock}
-          <ProgressBar current={charIndex + 1} total={ALL_CHARS.length} label="Choose Your Match" />
-          <Card>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
-              <GenderBadge gender={isWoman ? 'f' : 'm'} />
-              <span style={{ fontSize: 12, color: '#8B7355' }}>{currentChar.role}</span>
-              {currentManData && <WealthBadge wealth={currentManData.wealth} label={currentManData.wealthLabel} />}
-            </div>
-            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 26, margin: '0 0 16px', color: isWoman ? '#8B3A5E' : '#2E5077' }}>
-              {currentChar.name}
-            </h2>
-
-            {/* Bullet points */}
-            <div style={{ marginBottom: 24 }}>
-              {currentChar.bullets.map((b, i) => (
-                <div key={i} style={bulletStyle}>
-                  <span style={{ color: '#C5963A', marginRight: 8 }}>{ORN}</span>{b}
-                </div>
-              ))}
-            </div>
-
-            {/* Reminder of their earlier guess */}
-            <div style={{
-              background: '#F8F2E4', borderRadius: 8, padding: '10px 14px', marginBottom: 20,
-              fontSize: 13, color: '#5C4A32', border: '1px solid #E8DCC8'
-            }}>
-              Earlier you guessed: <strong style={{ color: '#8B6914' }}>{myGuess}</strong>
-            </div>
-
-            <div style={{ fontSize: 13, color: '#8B7355', marginBottom: 14, letterSpacing: 1, textTransform: 'uppercase' }}>
-              Which character is the best match?
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {optionButtons.map((opt, i) => (
-                <button
-                  key={i}
-                  onClick={() => handleChoice(opt)}
-                  style={{
-                    padding: '14px 18px', fontSize: 15, border: '2px solid',
-                    borderColor: i === 0 ? '#C5963A' : '#E8DCC8',
-                    borderRadius: 10, cursor: 'pointer', textAlign: 'left',
-                    background: i === 0 ? '#FFF9ED' : '#FFFDF7',
-                    color: '#2C1810', fontFamily: "'Lora', Georgia, serif",
-                    transition: 'all 0.15s', position: 'relative',
-                  }}
-                  onMouseEnter={e => { e.target.style.borderColor = '#C5963A'; e.target.style.background = '#FFF9ED'; }}
-                  onMouseLeave={e => { if (i !== 0) { e.target.style.borderColor = '#E8DCC8'; e.target.style.background = '#FFFDF7'; }}}
-                >
-                  {i === 0 && <span style={{ fontSize: 11, color: '#C5963A', display: 'block', marginBottom: 3, letterSpacing: 1 }}>YOUR GUESS</span>}
-                  {opt}
-                </button>
-              ))}
-            </div>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
-  // ===================== MATCHMAKING PHASE =====================
-  if (phase === 'matchmaking') {
-    const assignedMen = Object.values(matchSelections);
-    const allPaired = Object.keys(matchSelections).length >= 5;
-
-    return (
-      <div style={containerStyle}>
-        <div style={{ maxWidth: 720, margin: '20px auto 0', ...fadeStyle }}>
-          {titleBlock}
-          <div style={{ textAlign: 'center', marginBottom: 24 }}>
-            <p style={{ fontSize: 15, color: '#5C4A32', lineHeight: 1.7, maxWidth: 500, margin: '0 auto' }}>
-              Now play matchmaker! Pair each woman with the man you think she&apos;d be best suited for. Click a woman, then click a man to pair them. One woman will be left unmatched.
-            </p>
+    app.innerHTML = `
+      <div class="container fade fade-in" style="max-width:640px; margin-top:20px;">
+        ${titleHTML()}
+        <div class="card" style="max-width:640px; padding:36px 32px;">
+          <div style="text-align:center; margin-bottom:24px;">
+            <div style="font-size:13px; color:#C5963A; letter-spacing:2px; text-transform:uppercase; margin-bottom:4px;">Results for</div>
+            <div style="font-family:'Playfair Display',Georgia,serif; font-size:24px; font-weight:700;">${s.name}</div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 40px 1fr', gap: 0, alignItems: 'start' }}>
-            {/* Women */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <div style={{ fontSize: 12, color: '#8B3A5E', letterSpacing: 2, textTransform: 'uppercase', textAlign: 'center', marginBottom: 4, fontWeight: 700 }}>Women</div>
-              {WOMEN.map(w => {
-                const paired = matchSelections[w.id];
-                const isSelected = selectedWoman === w.id;
-                const disneyMatch = choices[w.id];
-                return (
-                  <button
-                    key={w.id}
-                    onClick={() => setSelectedWoman(isSelected ? null : w.id)}
-                    style={{
-                      padding: '10px 12px', fontSize: 14, border: '2px solid',
-                      borderColor: isSelected ? '#8B3A5E' : paired ? '#C5963A' : '#E8DCC8',
-                      borderRadius: 10, cursor: 'pointer', textAlign: 'left',
-                      background: isSelected ? '#F3E5EC' : paired ? '#FFF9ED' : '#FFFDF7',
-                      color: '#2C1810', fontFamily: "'Lora', Georgia, serif",
-                      transition: 'all 0.15s',
-                    }}
-                  >
-                    <div style={{ fontWeight: 600, fontSize: 13 }}>{w.name}</div>
-                    <div style={{ fontSize: 11, color: '#8B7355', marginTop: 2 }}>as {disneyMatch}</div>
-                    {paired && (
-                      <div style={{ fontSize: 11, color: '#8B6914', marginTop: 3, fontWeight: 600 }}>
-                        ♥ {MEN.find(m => m.id === paired)?.name}
-                      </div>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Connector */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', paddingTop: 30 }}>
-              <div style={{ fontSize: 20, color: '#C5963A' }}>♥</div>
-            </div>
-
-            {/* Men */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <div style={{ fontSize: 12, color: '#2E5077', letterSpacing: 2, textTransform: 'uppercase', textAlign: 'center', marginBottom: 4, fontWeight: 700 }}>Men</div>
-              {MEN.map(m => {
-                const isPaired = assignedMen.includes(m.id);
-                const pairedTo = Object.entries(matchSelections).find(([, v]) => v === m.id);
-                const disneyMatch = choices[m.id];
-                return (
-                  <button
-                    key={m.id}
-                    onClick={() => {
-                      if (selectedWoman) {
-                        handleMatchClick(selectedWoman, m.id);
-                        setSelectedWoman(null);
-                      }
-                    }}
-                    disabled={!selectedWoman}
-                    style={{
-                      padding: '10px 12px', fontSize: 14, border: '2px solid',
-                      borderColor: isPaired ? '#C5963A' : '#E8DCC8',
-                      borderRadius: 10, cursor: selectedWoman ? 'pointer' : 'default',
-                      background: isPaired ? '#FFF9ED' : '#FFFDF7',
-                      color: '#2C1810', fontFamily: "'Lora', Georgia, serif",
-                      transition: 'all 0.15s',
-                      opacity: selectedWoman ? 1 : 0.7,
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <span style={{ fontWeight: 600, fontSize: 13 }}>{m.name}</span>
-                      <span style={{ fontSize: 11, color: '#8B6914', fontWeight: 700 }}>{m.wealth}</span>
-                    </div>
-                    <div style={{ fontSize: 11, color: '#8B7355', marginTop: 2 }}>as {disneyMatch}</div>
-                    {pairedTo && (
-                      <div style={{ fontSize: 11, color: '#8B3A5E', marginTop: 3, fontWeight: 600 }}>
-                        ♥ {WOMEN.find(w => w.id === pairedTo[0])?.name}
-                      </div>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
+          <div style="margin-bottom:28px;">
+            <div class="section-title" style="color:#8B3A5E;">${ORN} Women ${ORN}</div>
+            ${womenRows}
           </div>
 
-          <div style={{ textAlign: 'center', marginTop: 28 }}>
-            <div style={{ fontSize: 13, color: '#8B7355', marginBottom: 12 }}>
-              {Object.keys(matchSelections).length} of 5 pairs made
-              {Object.keys(matchSelections).length >= 5 && ' \u2713'}
-            </div>
-            <button
-              onClick={() => triggerTransition(() => setPhase('summary'))}
-              disabled={!allPaired}
-              style={{
-                padding: '14px 40px', fontSize: 16, fontWeight: 600,
-                background: allPaired ? 'linear-gradient(135deg, #8B6914, #C5963A)' : '#D5CABC',
-                color: '#FFF', border: 'none', borderRadius: 10,
-                cursor: allPaired ? 'pointer' : 'default',
-                fontFamily: "'Lora', Georgia, serif", letterSpacing: 1,
-              }}
-            >
-              See My Results {ORN}
-            </button>
+          <div style="margin-bottom:28px;">
+            <div class="section-title" style="color:#2E5077;">${ORN} Men ${ORN}</div>
+            ${menRows}
           </div>
+
+          <div style="margin-bottom:28px;">
+            <div class="section-title" style="color:#5C4A32;">${ORN} My Matchmaking ${ORN}</div>
+            ${pairRows}
+            ${unmatchedLine}
+          </div>
+
+          <button class="btn-gold" id="screenshotBtn" style="font-size:15px;">
+            \uD83D\uDCCB Copy Screenshot to Clipboard
+          </button>
+          <p style="font-size:12px; color:#8B7355; text-align:center; margin-top:10px;">
+            After copying, go to Padlet and paste (Ctrl+V / Cmd+V) to share your results.
+          </p>
         </div>
-      </div>
-    );
-  }
-
-  // ===================== SUMMARY SCREEN =====================
-  if (phase === 'summary') {
-    const unmatchedWomen = WOMEN.filter(w => !matchSelections[w.id]);
-    return (
-      <div style={containerStyle}>
-        <div style={{ maxWidth: 640, margin: '20px auto 0', ...fadeStyle }}>
-          {titleBlock}
-          <Card style={{ maxWidth: 640, padding: '36px 32px' }}>
-            <div style={{ textAlign: 'center', marginBottom: 24 }}>
-              <div style={{ fontSize: 13, color: '#C5963A', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 4 }}>Results for</div>
-              <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 24, fontWeight: 700 }}>{name}</div>
-            </div>
-
-            {/* Women Matches */}
-            <div style={{ marginBottom: 28 }}>
-              <div style={{ fontSize: 12, color: '#8B3A5E', letterSpacing: 2, textTransform: 'uppercase', fontWeight: 700, marginBottom: 12, textAlign: 'center' }}>
-                {ORN} Women {ORN}
-              </div>
-              {WOMEN.map(w => (
-                <div key={w.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #F0E6D4' }}>
-                  <span style={{ fontWeight: 600, fontSize: 14 }}>{w.name}</span>
-                  <span style={{ fontSize: 14, color: '#8B6914' }}>{choices[w.id] || '(none)'}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Men Matches */}
-            <div style={{ marginBottom: 28 }}>
-              <div style={{ fontSize: 12, color: '#2E5077', letterSpacing: 2, textTransform: 'uppercase', fontWeight: 700, marginBottom: 12, textAlign: 'center' }}>
-                {ORN} Men {ORN}
-              </div>
-              {MEN.map(m => (
-                <div key={m.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #F0E6D4' }}>
-                  <span style={{ fontWeight: 600, fontSize: 14 }}>{m.name} <span style={{ color: '#8B6914', fontSize: 12 }}>{m.wealth}</span></span>
-                  <span style={{ fontSize: 14, color: '#8B6914' }}>{choices[m.id] || '(none)'}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Matchmaking */}
-            <div style={{ marginBottom: 28 }}>
-              <div style={{ fontSize: 12, color: '#5C4A32', letterSpacing: 2, textTransform: 'uppercase', fontWeight: 700, marginBottom: 12, textAlign: 'center' }}>
-                {ORN} My Matchmaking {ORN}
-              </div>
-              {WOMEN.filter(w => matchSelections[w.id]).map(w => {
-                const man = MEN.find(m => m.id === matchSelections[w.id]);
-                return (
-                  <div key={w.id} style={{ textAlign: 'center', padding: '8px 0', fontSize: 15 }}>
-                    <span style={{ color: '#8B3A5E', fontWeight: 600 }}>{w.name}</span>
-                    <span style={{ color: '#C5963A', margin: '0 10px' }}>&</span>
-                    <span style={{ color: '#2E5077', fontWeight: 600 }}>{man?.name}</span>
-                  </div>
-                );
-              })}
-              {unmatchedWomen.length > 0 && (
-                <div style={{ textAlign: 'center', fontSize: 13, color: '#8B7355', fontStyle: 'italic', marginTop: 8 }}>
-                  Unmatched: {unmatchedWomen.map(w => w.name).join(', ')}
-                </div>
-              )}
-            </div>
-
-            {/* Screenshot Button */}
-            <button
-              onClick={generateScreenshot}
-              style={{
-                width: '100%', padding: '14px', fontSize: 15, fontWeight: 600,
-                background: copied ? '#4A7C59' : 'linear-gradient(135deg, #8B6914, #C5963A)',
-                color: '#FFF', border: 'none', borderRadius: 10, cursor: 'pointer',
-                fontFamily: "'Lora', Georgia, serif", letterSpacing: 1, transition: 'background 0.3s',
-              }}
-            >
-              {copied ? '\u2713 Copied to Clipboard! Paste on Padlet!' : '\uD83D\uDCCB Copy Screenshot to Clipboard'}
-            </button>
-            <p style={{ fontSize: 12, color: '#8B7355', textAlign: 'center', marginTop: 10 }}>
-              After copying, go to Padlet and paste (Ctrl+V / Cmd+V) to share your results.
-            </p>
-          </Card>
-
-          <canvas ref={canvasRef} style={{ display: 'none' }} />
-
-          <div style={{ textAlign: 'center', marginTop: 24 }}>
-            <button
-              onClick={() => {
-                setPhase('name'); setName(''); setCharIndex(0);
-                setGuesses({}); setChoices({}); setMatchSelections({});
-                setCurrentGuess(''); setSelectedWoman(null);
-              }}
-              style={{
-                padding: '10px 24px', fontSize: 13, background: 'transparent',
-                color: '#8B7355', border: '1px solid #D5CABC', borderRadius: 8,
-                cursor: 'pointer', fontFamily: "'Lora', Georgia, serif",
-              }}
-            >
-              Start Over
-            </button>
-          </div>
+        <div style="text-align:center; margin-top:24px;">
+          <button class="btn-outline" id="restartBtn">Start Over</button>
         </div>
-      </div>
-    );
-  }
+      </div>`;
 
-  return null;
+    document.getElementById('screenshotBtn').addEventListener('click', generateScreenshot);
+    document.getElementById('restartBtn').addEventListener('click', () => {
+      state = { phase: 'name', name: '', charIndex: 0, guesses: {}, currentGuess: '', choices: {}, matchSelections: {}, selectedWoman: null, copied: false };
+      render();
+    });
+    return;
+  }
 }
+
+function transition(cb) {
+  const app = document.getElementById('app');
+  const inner = app.firstElementChild;
+  if (inner) inner.classList.add('fade-out');
+  setTimeout(() => { cb(); render(); }, 250);
+}
+
+function submitGuess() {
+  if (!state.currentGuess.trim()) return;
+  const ch = ALL_CHARS[state.charIndex];
+  state.guesses[ch.id] = state.currentGuess.trim();
+  state.currentGuess = '';
+  if (state.charIndex < ALL_CHARS.length - 1) {
+    transition(() => { state.charIndex++; });
+  } else {
+    transition(() => { state.charIndex = 0; state.phase = 'detailed'; });
+  }
+}
+
+function submitChoice(choice) {
+  const ch = ALL_CHARS[state.charIndex];
+  state.choices[ch.id] = choice;
+  if (state.charIndex < ALL_CHARS.length - 1) {
+    transition(() => { state.charIndex++; });
+  } else {
+    transition(() => { state.phase = 'matchmaking'; });
+  }
+}
+
+function doMatch(womanId, manId) {
+  // Remove this man from any other woman
+  for (const wid of Object.keys(state.matchSelections)) {
+    if (state.matchSelections[wid] === manId) delete state.matchSelections[wid];
+  }
+  if (state.matchSelections[womanId] === manId) {
+    delete state.matchSelections[womanId];
+  } else {
+    state.matchSelections[womanId] = manId;
+  }
+}
+
+async function generateScreenshot() {
+  const canvas = document.getElementById('screenshotCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = 900;
+  const padding = 40;
+  const lineH = 26;
+
+  let totalLines = 6 + 2 + WOMEN.length * 2 + 2 + MEN.length * 2 + 2 + 2 + Object.keys(state.matchSelections).length * 2 + 2;
+  const H = Math.max(700, padding * 2 + totalLines * lineH + 80);
+
+  canvas.width = W * 2;
+  canvas.height = H * 2;
+  ctx.scale(2, 2);
+
+  ctx.fillStyle = '#FBF5E8';
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.strokeStyle = '#C5963A';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(16, 16, W - 32, H - 32);
+  ctx.strokeStyle = '#E8DCC8';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(22, 22, W - 44, H - 44);
+
+  let y = padding + 20;
+
+  function drawText(text, x, size, color, fontStyle, align) {
+    ctx.fillStyle = color || '#2C1810';
+    ctx.font = (fontStyle ? fontStyle + ' ' : '') + size + 'px Georgia, serif';
+    ctx.textAlign = align || 'left';
+    ctx.fillText(text, x, y);
+  }
+
+  drawText('Pride & Prejudice', W/2, 28, '#2C1810', 'bold', 'center');
+  y += 34;
+  drawText('The Disney Universe Bracket', W/2, 18, '#8B6914', '', 'center');
+  y += 30;
+  drawText(state.name, W/2, 16, '#5C4A32', 'italic', 'center');
+  y += 40;
+
+  ctx.strokeStyle = '#C5963A'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(padding+40, y); ctx.lineTo(W-padding-40, y); ctx.stroke();
+  y += 25;
+
+  drawText('\u2726  WOMEN  \u2726', W/2, 13, '#8B3A5E', 'bold', 'center');
+  y += 28;
+
+  WOMEN.forEach(w => {
+    drawText(w.name, padding+30, 14, '#2C1810', 'bold', 'left');
+    ctx.fillStyle = '#8B6914'; ctx.font = '14px Georgia, serif'; ctx.textAlign = 'right';
+    ctx.fillText(state.choices[w.id] || '(none)', W-padding-30, y);
+    y += lineH;
+  });
+  y += 15;
+
+  drawText('\u2726  MEN  \u2726', W/2, 13, '#2E5077', 'bold', 'center');
+  y += 28;
+
+  MEN.forEach(m => {
+    drawText(m.name + '  ' + m.wealth, padding+30, 14, '#2C1810', 'bold', 'left');
+    ctx.fillStyle = '#8B6914'; ctx.font = '14px Georgia, serif'; ctx.textAlign = 'right';
+    ctx.fillText(state.choices[m.id] || '(none)', W-padding-30, y);
+    y += lineH;
+  });
+  y += 20;
+
+  ctx.strokeStyle = '#C5963A';
+  ctx.beginPath(); ctx.moveTo(padding+40, y); ctx.lineTo(W-padding-40, y); ctx.stroke();
+  y += 25;
+
+  drawText('\u2726  MY MATCHMAKING  \u2726', W/2, 13, '#5C4A32', 'bold', 'center');
+  y += 28;
+
+  WOMEN.forEach(w => {
+    const manId = state.matchSelections[w.id];
+    const man = MEN.find(m => m.id === manId);
+    if (man) {
+      ctx.textAlign = 'center'; ctx.fillStyle = '#2C1810'; ctx.font = '14px Georgia, serif';
+      ctx.fillText(w.name + '  &  ' + man.name, W/2, y);
+      y += lineH;
+    }
+  });
+
+  const unmatched = WOMEN.filter(w => !state.matchSelections[w.id]);
+  if (unmatched.length > 0) {
+    y += 8;
+    ctx.textAlign = 'center'; ctx.fillStyle = '#8B7355'; ctx.font = 'italic 13px Georgia, serif';
+    ctx.fillText('Unmatched: ' + unmatched.map(w => w.name).join(', '), W/2, y);
+  }
+
+  const btn = document.getElementById('screenshotBtn');
+  try {
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+    btn.textContent = '\u2713 Copied to Clipboard! Paste on Padlet!';
+    btn.style.background = '#4A7C59';
+    setTimeout(() => { btn.textContent = '\uD83D\uDCCB Copy Screenshot to Clipboard'; btn.style.background = 'linear-gradient(135deg, #8B6914, #C5963A)'; }, 3000);
+  } catch {
+    const link = document.createElement('a');
+    link.download = 'pride-prejudice-bracket-' + state.name.replace(/\s+/g, '-') + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    btn.textContent = '\u2713 Downloaded! Upload to Padlet!';
+    btn.style.background = '#4A7C59';
+    setTimeout(() => { btn.textContent = '\uD83D\uDCCB Copy Screenshot to Clipboard'; btn.style.background = 'linear-gradient(135deg, #8B6914, #C5963A)'; }, 3000);
+  }
+}
+
+render();
+</script>
+</body>
+</html>
