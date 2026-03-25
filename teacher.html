@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pride & Prejudice: The Disney Universe Bracket (Teacher Edition)</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;font-family:'Lora',Georgia,serif;color:#2C1810;padding:24px 16px;position:relative;overflow-x:hidden;background:#FBF5E8}
+.bg-layer{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;overflow:hidden}
+.bg-layer::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 20% 50%,rgba(197,150,58,.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(139,58,94,.06) 0%,transparent 50%),radial-gradient(ellipse at 60% 80%,rgba(46,80,119,.05) 0%,transparent 50%);animation:bgDrift 25s ease-in-out infinite alternate}
+@keyframes bgDrift{0%{transform:translate(0,0) rotate(0deg)}33%{transform:translate(30px,-20px) rotate(1deg)}66%{transform:translate(-20px,30px) rotate(-1deg)}100%{transform:translate(10px,-10px) rotate(.5deg)}}
+.sparkle{position:fixed;border-radius:50%;background:rgba(197,150,58,.3);pointer-events:none;z-index:0;animation:twinkle var(--dur) ease-in-out infinite alternate}
+@keyframes twinkle{0%{opacity:0;transform:scale(.5)}50%{opacity:1;transform:scale(1.2)}100%{opacity:.2;transform:scale(.8)}}
+.vine{position:fixed;pointer-events:none;z-index:0;opacity:.04;color:#8B6914;animation:sway 20s ease-in-out infinite alternate}
+@keyframes sway{0%{transform:rotate(-3deg)}100%{transform:rotate(3deg)}}
+#app{position:relative;z-index:1}
+.timer-corner{position:fixed;top:16px;right:16px;z-index:100;background:rgba(255,253,247,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:2px solid #E8DCC8;border-radius:12px;padding:10px 16px;text-align:center;min-width:70px;box-shadow:0 2px 12px rgba(44,24,16,.1);transition:border-color .3s}
+.timer-corner.urgent{border-color:#C0392B}
+.timer-corner .timer-label{font-size:10px;color:#8B7355;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:2px}
+.timer-corner .timer-num{font-family:'Playfair Display',Georgia,serif;font-size:28px;font-weight:700;color:#2C1810;line-height:1}
+.timer-corner.urgent .timer-num{color:#C0392B}
+.timer-corner .timer-sub{font-size:10px;color:#A08B6E;margin-top:2px}
+.title-block{text-align:center;margin-bottom:28px}
+.title-block .sub{font-size:13px;color:#C5963A;letter-spacing:4px;margin-bottom:6px;text-transform:uppercase}
+.title-block h1{font-family:'Playfair Display',Georgia,serif;font-size:30px;font-weight:700;line-height:1.2;color:#2C1810}
+.title-block .orn{font-size:14px;color:#8B6914;margin-top:6px;letter-spacing:2px}
+.card{background:rgba(255,253,247,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:14px;padding:32px 28px;box-shadow:0 2px 20px rgba(44,24,16,.08),0 1px 4px rgba(44,24,16,.04);border:1px solid #E8DCC8;max-width:600px;margin:0 auto}
+.progress-wrap{width:100%;max-width:500px;margin:0 auto 28px}
+.progress-labels{display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;color:#8B7355;letter-spacing:1px}
+.progress-bg{height:6px;background:#E8DCC8;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#8B6914,#C5963A);border-radius:3px;transition:width .4s ease}
+.badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:20px}
+.badge-f{background:#F3E5EC;color:#8B3A5E}
+.badge-m{background:#E2EAF2;color:#2E5077}
+.badge-wealth{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;background:#FFF3D6;color:#8B6914;margin-left:8px;letter-spacing:1px}
+.badge-wealth .wl{font-weight:400;font-size:11px}
+.trait-tags{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 22px}
+.trait-tag{display:inline-block;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;letter-spacing:.5px;border:1px solid}
+.trait-tag-f{background:#FDF2F6;border-color:#E8C5D5;color:#8B3A5E}
+.trait-tag-m{background:#EEF3F8;border-color:#C5D5E8;color:#2E5077}
+.trait-mini{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.trait-mini-tag{display:inline-block;padding:2px 7px;border-radius:10px;font-size:9px;font-weight:600;letter-spacing:.3px;border:1px solid}
+.trait-mini-f{background:#FDF2F6;border-color:#E8C5D5;color:#8B3A5E}
+.trait-mini-m{background:#EEF3F8;border-color:#C5D5E8;color:#2E5077}
+.char-name{font-family:'Playfair Display',Georgia,serif;font-size:26px;margin:0 0 6px;font-weight:700}
+.char-name-f{color:#8B3A5E}
+.char-name-m{color:#2E5077}
+.text-input{width:100%;padding:14px 16px;font-size:16px;border:2px solid #E8DCC8;border-radius:10px;background:rgba(255,253,247,.9);color:#2C1810;outline:none;font-family:'Lora',Georgia,serif;transition:border-color .2s}
+.text-input:focus{border-color:#C5963A}
+.btn-gold{width:100%;padding:14px;font-size:16px;font-weight:600;background:linear-gradient(135deg,#8B6914,#C5963A);color:#FFF;border:none;border-radius:10px;cursor:pointer;font-family:'Lora',Georgia,serif;letter-spacing:1px;transition:all .2s}
+.btn-gold:disabled{background:#D5CABC;cursor:default}
+.btn-gold:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(139,105,20,.3)}
+.btn-option{padding:14px 18px;font-size:15px;border:2px solid #E8DCC8;border-radius:10px;cursor:pointer;text-align:left;width:100%;background:rgba(255,253,247,.9);color:#2C1810;font-family:'Lora',Georgia,serif;transition:all .15s;margin-bottom:10px}
+.btn-option:hover:not(:disabled){border-color:#C5963A;background:#FFF9ED;transform:translateX(4px)}
+.btn-option.yours{border-color:#C5963A;background:#FFF9ED}
+.btn-option:disabled{opacity:.5;cursor:default}
+.bullet{font-size:14px;line-height:1.7;color:#3D2E1F;margin:6px 0;padding-left:6px}
+.bullet-dot{color:#C5963A;margin-right:8px}
+.guess-reminder{background:#F8F2E4;border-radius:8px;padding:10px 14px;margin-bottom:20px;font-size:13px;color:#5C4A32;border:1px solid #E8DCC8}
+.guess-reminder strong{color:#8B6914}
+.match-grid{display:grid;grid-template-columns:1fr 40px 1fr;align-items:start}
+.match-col{display:flex;flex-direction:column;gap:10px}
+.match-col-title{font-size:12px;letter-spacing:2px;text-transform:uppercase;text-align:center;margin-bottom:4px;font-weight:700}
+.match-btn{padding:10px 12px;font-size:14px;border:2px solid #E8DCC8;border-radius:10px;cursor:pointer;text-align:left;width:100%;background:rgba(255,253,247,.9);color:#2C1810;font-family:'Lora',Georgia,serif;transition:all .15s}
+.match-btn:hover:not(.dim){transform:translateY(-2px);box-shadow:0 4px 12px rgba(44,24,16,.1)}
+.match-btn.selected{border-color:#8B3A5E;background:#F3E5EC}
+.match-btn.paired{border-color:#C5963A;background:#FFF9ED}
+.match-btn.dim{opacity:.7;cursor:default}
+.match-btn .mname{font-weight:600;font-size:13px}
+.match-btn .msub{font-size:11px;color:#8B7355;margin-top:2px}
+.match-btn .mpair{font-size:11px;font-weight:600;margin-top:3px}
+.match-btn .mpair-w{color:#8B6914}
+.match-btn .mpair-m{color:#8B3A5E}
+.match-btn .wealth-inline{font-size:11px;color:#8B6914;font-weight:700;margin-left:6px}
+.connector{display:flex;align-items:center;justify-content:center;height:100%;padding-top:30px}
+.connector-heart{font-size:20px;color:#C5963A;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+.summary-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #F0E6D4}
+.summary-row .sname{font-weight:600;font-size:14px}
+.summary-row .schoice{font-size:14px;color:#8B6914}
+.summary-row .swealth{color:#8B6914;font-size:12px}
+.pair-row{text-align:center;padding:8px 0;font-size:15px}
+.pair-row .pw{color:#8B3A5E;font-weight:600}
+.pair-row .pamp{color:#C5963A;margin:0 10px}
+.pair-row .pm{color:#2E5077;font-weight:600}
+.section-title{font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:12px;text-align:center}
+.btn-outline{padding:10px 24px;font-size:13px;background:transparent;color:#8B7355;border:1px solid #D5CABC;border-radius:8px;cursor:pointer;font-family:'Lora',Georgia,serif;transition:all .2s}
+.btn-outline:hover{border-color:#C5963A;color:#8B6914}
+.fade{transition:opacity .25s ease}
+.fade-out{opacity:0}
+.container{max-width:600px;margin:0 auto}
+.container-wide{max-width:720px;margin:0 auto}
+
+</style>
+</head>
+<body>
+<div class="bg-layer"></div>
+<div id="timer-display" style="display:none;"></div>
+<div id="app"></div>
+<canvas id="screenshotCanvas" style="display:none;"></canvas>
+<script>
+
+(function(){
+  for(var i=0;i<30;i++){
+    var s=document.createElement('div');s.className='sparkle';
+    s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';
+    s.style.setProperty('--dur',(3+Math.random()*5)+'s');
+    s.style.animationDelay=(Math.random()*5)+'s';
+    var sz=(2+Math.random()*4)+'px';s.style.width=sz;s.style.height=sz;
+    document.body.appendChild(s);
+  }
+  var ornChars=['\u2726','\u2727','\u273B','\u2766','\u2767'];
+  var positions=[{top:'8%',left:'5%'},{top:'15%',right:'8%'},{bottom:'20%',left:'7%'},{bottom:'10%',right:'5%'},{top:'45%',left:'3%'},{top:'60%',right:'4%'}];
+  positions.forEach(function(pos,i){
+    var v=document.createElement('div');v.className='vine';
+    v.textContent=ornChars[i%ornChars.length];
+    Object.assign(v.style,pos);
+    v.style.fontSize=(80+Math.random()*80)+'px';
+    v.style.animationDelay=(Math.random()*5)+'s';
+    v.style.animationDuration=(15+Math.random()*10)+'s';
+    document.body.appendChild(v);
+  });
+})();
+
+var WOMEN=[
+  {id:'elizabeth',name:'Elizabeth Bennet',role:'Second Eldest Sister',traits:['Witty','Independent','Sharp-tongued','Stubborn'],bullets:['Second of five sisters in a family of modest means','Sharpest mind in any room with a quick tongue','Forms strong first impressions that are not always correct','Refuses to marry for anything less than genuine love and respect'],options:['Belle (Beauty & the Beast)','Mulan','Merida (Brave)']},
+  {id:'jane',name:'Jane Bennet',role:'Eldest Sister',traits:['Kind','Trusting','Gentle','Optimistic'],bullets:['Eldest and most beautiful of five sisters','Unfailingly kind, gracious, and trusting (sometimes too trusting)','Hides her deepest feelings behind quiet composure','Believes the best about everyone, even when the evidence says otherwise'],options:['Rapunzel (Tangled)','Anna (Frozen)','Snow White']},
+  {id:'mary',name:'Mary Bennet',role:'Middle Sister',traits:['Bookish','Awkward','Preachy','Ignored'],bullets:['The overlooked middle sister nobody quite notices','Practices piano constantly (though not well)','Quotes moral philosophy that nobody asked for','Means well but is completely out of step with everyone around her'],options:['Lisa Simpson (The Simpsons)','Mantis (Guardians of the Galaxy)','Sadness (Inside Out)']},
+  {id:'kitty',name:'Kitty Bennet',role:'Fourth Sister',traits:['Follower','Timid','Nervous','Whiny'],bullets:['Constantly overshadowed by her younger, louder sister Lydia','Has no strong opinions of her own','Cries at the drop of a hat','Without Lydia around, it is unclear who Kitty even is'],options:['Drizella (Cinderella)','Young Nala (The Lion King)','Minnie Mouse']},
+  {id:'lydia',name:'Lydia Bennet',role:'Youngest Sister',traits:['Wild','Reckless','Boy-crazy','Impulsive'],bullets:['Only fifteen but by far the loudest sister','Obsessed with officers in uniform, parties, and gossip','Acts entirely on impulse with zero thought for consequences','Makes a reckless decision that nearly destroys her family reputation'],options:['Ariel (The Little Mermaid)','Tinker Bell (Peter Pan)','Vanellope (Wreck-It Ralph)']},
+  {id:'charlotte',name:'Charlotte Lucas',role:"Elizabeth's Best Friend",traits:['Practical','Realistic','Strategic','Unsentimental'],bullets:["Elizabeth's closest friend: intelligent, observant, practical to her core",'At twenty-seven, society considers her nearly too old to marry','Has zero romantic illusions about life','Will choose a comfortable home over love without hesitation'],options:['Natasha Romanoff (Black Widow)','Megara (Hercules)','Elsa (Frozen)']}
+];
+
+var MEN=[
+  {id:'darcy',name:'Mr. Darcy',role:'Wealthy Gentleman',wealth:'$$$$$',wealthLabel:'Extremely rich',traits:['Proud','Rich','Loyal','Reserved'],bullets:['One of the wealthiest men in England','Tall, handsome, immediately noticed at every gathering','His pride and stiffness make a truly terrible first impression','Those closest to him know he is deeply loyal, generous, and kind'],options:['Tony Stark / Iron Man','The Beast (Beauty & the Beast)','Han Solo (Star Wars)']},
+  {id:'bingley',name:'Mr. Bingley',role:"Darcy's Close Friend",wealth:'$$$$',wealthLabel:'Very rich',traits:['Cheerful','Lovable','Kind','Easily-led'],bullets:['Warm, open, and instantly likeable without trying','Easily influenced, especially by Darcy and his own sisters','Can be talked out of following his own heart','Falls in love quickly and completely'],options:['Peter Parker / Spider-Man','Kristoff (Frozen)','Hercules']},
+  {id:'wickham',name:'George Wickham',role:'Charming Military Officer',wealth:'$',wealthLabel:'Basically broke',traits:['Charming','Handsome','Smooth-talker','Fake'],bullets:["Grew up near Darcy's wealth but never had his own",'Tells a heartbreaking story about being wronged by Darcy','Wins over everyone instantly with charm and good looks','His romantic interest in women tends to follow their money'],options:['Loki (Thor / Avengers)','Hans (Frozen)','Flynn Rider (Tangled)']},
+  {id:'collins',name:'Mr. Collins',role:'Clergyman & Distant Cousin',wealth:'$$',wealthLabel:'Modest but will inherit',traits:['Pompous','Name-dropper','Annoying','Oblivious'],bullets:['Modest income, but will inherit the Bennet family home someday','Talks endlessly about his powerful patroness Lady Catherine de Bourgh','Proposes marriage like a business contract','Genuinely bewildered when a woman refuses him'],options:['Gaston (Beauty & the Beast)','Cogsworth (Beauty & the Beast)','Buzz Lightyear (Toy Story)']},
+  {id:'fitzwilliam',name:'Colonel Fitzwilliam',role:"Darcy's Cousin & Officer",wealth:'$$',wealthLabel:"Well-bred but won't inherit",traits:['Charming','Honorable','Dutiful','Broke-ish'],bullets:["Second son of an earl, so he won't inherit the family fortune",'Openly admits he must marry a woman with money','Charming, warm, and genuinely good company','The kind of man everyone wishes could just follow his heart'],options:['Lando Calrissian (Star Wars)','Poe Dameron (Star Wars)','Captain America / Steve Rogers']}
+];
+
+var ALL_CHARS = WOMEN.concat(MEN);
+var ORN = '\u2726';
+var state = {phase:'name',name:'',charIndex:0,guesses:{},currentGuess:'',choices:{},matchSelections:{},selectedWoman:null,copied:false};
+
+
+var timerInterval = null, timerSeconds = 0, timerUnlocked = true;
+function clearTimer() { timerUnlocked = true; }
+function startTimer(seconds, label, sublabel, onUnlock) { timerUnlocked = true; if (onUnlock) onUnlock(); }
+function updateTimerDisplay() {}
+
+
+function esc(str) {
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
+}
+
+function isWomanIdx(i) { return i < WOMEN.length; }
+function getManData(i) { return i >= WOMEN.length ? MEN[i - WOMEN.length] : null; }
+
+function titleHTML() {
+  return '<div class="title-block"><div class="sub">Jane Austen\'s</div><h1>Pride & Prejudice</h1><div class="orn">' + ORN + ' The Disney Universe Bracket ' + ORN + '</div></div>';
+}
+
+function progressHTML(c, t, l) {
+  return '<div class="progress-wrap"><div class="progress-labels"><span>' + l + '</span><span>' + c + ' of ' + t + '</span></div><div class="progress-bg"><div class="progress-fill" style="width:' + ((c/t)*100) + '%"></div></div></div>';
+}
+
+function miniTraits(ch, iw) {
+  return '<div class="trait-mini">' + ch.traits.map(function(t) {
+    return '<span class="trait-mini-tag ' + (iw ? 'trait-mini-f' : 'trait-mini-m') + '">' + t + '</span>';
+  }).join('') + '</div>';
+}
+
+function render() {
+  var app = document.getElementById('app');
+  var s = state;
+
+  if (s.phase === 'name') {
+    clearTimer();
+    app.innerHTML = '<div class="container" style="max-width:480px;margin-top:60px;text-align:center;">' + titleHTML() + '<div class="card"><p style="font-size:15px;color:#5C4A32;line-height:1.7;margin-bottom:24px;">You\'re about to meet the characters of <em>Pride & Prejudice</em>. For each one, you\'ll think of someone they remind you of, then see if you agree with our picks. Finally, you\'ll play matchmaker.</p><input class="text-input" type="text" placeholder="Enter your name..." id="nameInput" value="' + esc(s.name) + '"><button class="btn-gold" style="margin-top:20px;" id="nameBtn"' + (!s.name.trim() ? ' disabled' : '') + '>Enter the Ballroom ' + ORN + '</button></div></div>';
+    var inp = document.getElementById('nameInput');
+    inp.addEventListener('input', function(e) { state.name = e.target.value; document.getElementById('nameBtn').disabled = !e.target.value.trim(); });
+    inp.addEventListener('keydown', function(e) { if (e.key === 'Enter' && state.name.trim()) transition(function() { state.phase = 'intro'; }); });
+    document.getElementById('nameBtn').addEventListener('click', function() { if (state.name.trim()) transition(function() { state.phase = 'intro'; }); });
+    inp.focus();
+    return;
+  }
+
+  if (s.phase === 'intro') {
+    var ch = ALL_CHARS[s.charIndex];
+    var iw = isWomanIdx(s.charIndex);
+    var traitsHTML = '<div class="trait-tags">' + ch.traits.map(function(t) { return '<span class="trait-tag ' + (iw ? 'trait-tag-f' : 'trait-tag-m') + '">' + t + '</span>'; }).join('') + '</div>';
+    app.innerHTML = '<div class="container" style="max-width:540px;margin-top:20px;">' + titleHTML() + progressHTML(s.charIndex + 1, ALL_CHARS.length, 'Quick Introductions') + '<div class="card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;"><span class="badge ' + (iw ? 'badge-f' : 'badge-m') + '">' + (iw ? 'Woman' : 'Man') + '</span><span style="font-size:12px;color:#8B7355;">' + ch.role + '</span></div><h2 class="char-name ' + (iw ? 'char-name-f' : 'char-name-m') + '">' + ch.name + '</h2>' + traitsHTML + '<label style="display:block;font-size:13px;color:#8B7355;margin-bottom:4px;letter-spacing:1px;text-transform:uppercase;">Who does this remind you of?</label><p style="font-size:12px;color:#A08B6E;margin-bottom:12px;line-height:1.5;">It could be a friend, a family member, yourself, or a fictional character.</p><input class="text-input" type="text" placeholder="Type a name..." id="guessInput" value="' + esc(s.currentGuess) + '"><button class="btn-gold" style="margin-top:16px;font-size:15px;padding:13px;" id="guessBtn" disabled>Next ' + ORN + '</button></div></div>';
+    var ginp = document.getElementById('guessInput');
+    var gbtn = document.getElementById('guessBtn');
+    function updateGB() { gbtn.disabled = !timerUnlocked || !state.currentGuess.trim(); }
+    ginp.addEventListener('input', function(e) { state.currentGuess = e.target.value; updateGB(); });
+    ginp.addEventListener('keydown', function(e) { if (e.key === 'Enter' && timerUnlocked && state.currentGuess.trim()) submitGuess(); });
+    gbtn.addEventListener('click', function() { if (timerUnlocked) submitGuess(); });
+    ginp.focus();
+    startTimer(0, 'Think', 'Read & type', function() { updateGB(); });
+    return;
+  }
+
+  if (s.phase === 'detailed') {
+    var ch = ALL_CHARS[s.charIndex];
+    var iw = isWomanIdx(s.charIndex);
+    var md = getManData(s.charIndex);
+    var myGuess = s.guesses[ch.id] || '';
+    var opts = [myGuess].concat(ch.options);
+    var wb = '';
+    if (md) wb = '<span class="badge-wealth">' + md.wealth + ' <span class="wl">' + esc(md.wealthLabel) + '</span></span>';
+    var bHTML = ch.bullets.map(function(b) { return '<div class="bullet"><span class="bullet-dot">' + ORN + '</span>' + esc(b) + '</div>'; }).join('');
+    var oHTML = opts.map(function(o, i) {
+      var lb = i === 0 ? '<span style="font-size:11px;color:#C5963A;display:block;margin-bottom:3px;letter-spacing:1px;">YOUR GUESS</span>' : '';
+      return '<button class="btn-option' + (i === 0 ? ' yours' : '') + '" data-idx="' + i + '"' + (false ? ' disabled' : '') + '>' + lb + esc(o) + '</button>';
+    }).join('');
+    app.innerHTML = '<div class="container" style="max-width:580px;margin-top:20px;">' + titleHTML() + progressHTML(s.charIndex + 1, ALL_CHARS.length, 'Choose Your Match') + '<div class="card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;"><span class="badge ' + (iw ? 'badge-f' : 'badge-m') + '">' + (iw ? 'Woman' : 'Man') + '</span><span style="font-size:12px;color:#8B7355;">' + ch.role + '</span>' + wb + '</div><h2 class="char-name ' + (iw ? 'char-name-f' : 'char-name-m') + '">' + ch.name + '</h2><div style="margin-bottom:24px;">' + bHTML + '</div><div class="guess-reminder">Earlier you guessed: <strong>' + esc(myGuess) + '</strong></div><div style="font-size:13px;color:#8B7355;margin-bottom:14px;letter-spacing:1px;text-transform:uppercase;">Which character is the best match?</div><div id="optsWrap">' + oHTML + '</div></div></div>';
+    startTimer(0, 'Read', 'Then choose', function() { document.querySelectorAll('.btn-option').forEach(function(b) { b.disabled = false; }); });
+    document.querySelectorAll('.btn-option').forEach(function(btn) {
+      btn.addEventListener('click', function() { if (!timerUnlocked) return; submitChoice(opts[parseInt(btn.dataset.idx)]); });
+    });
+    return;
+  }
+
+  if (s.phase === 'matchmaking') {
+    var aM = Object.values(s.matchSelections);
+    var pC = Object.keys(s.matchSelections).length;
+    var aP = pC >= 5;
+    var wH = WOMEN.map(function(w) {
+      var p = s.matchSelections[w.id], iS = s.selectedWoman === w.id, dm = s.choices[w.id] || '';
+      var cls = 'match-btn'; if (iS) cls += ' selected'; else if (p) cls += ' paired';
+      var pl = ''; if (p) { var m = MEN.find(function(m) { return m.id === p; }); pl = '<div class="mpair mpair-w">\u2665 ' + (m ? esc(m.name) : '') + '</div>'; }
+      return '<button class="' + cls + '" data-woman="' + w.id + '"><div class="mname">' + esc(w.name) + '</div><div class="msub">as ' + esc(dm) + '</div>' + miniTraits(w, true) + pl + '</button>';
+    }).join('');
+    var mH = MEN.map(function(m) {
+      var iP = aM.indexOf(m.id) >= 0, pe = null;
+      Object.keys(s.matchSelections).forEach(function(k) { if (s.matchSelections[k] === m.id) pe = k; });
+      var dm = s.choices[m.id] || '', cls = 'match-btn';
+      if (iP) cls += ' paired'; if (!s.selectedWoman) cls += ' dim';
+      var pl = ''; if (pe) { var w = WOMEN.find(function(w) { return w.id === pe; }); pl = '<div class="mpair mpair-m">\u2665 ' + (w ? esc(w.name) : '') + '</div>'; }
+      return '<button class="' + cls + '" data-man="' + m.id + '"><div style="display:flex;align-items:center;gap:6px;"><span class="mname">' + esc(m.name) + '</span><span class="wealth-inline">' + m.wealth + '</span></div><div class="msub">as ' + esc(dm) + '</div>' + miniTraits(m, false) + pl + '</button>';
+    }).join('');
+    var nT = !timerInterval && !timerUnlocked;
+    app.innerHTML = '<div class="container-wide" style="margin-top:20px;">' + titleHTML() + '<div style="text-align:center;margin-bottom:24px;"><p style="font-size:15px;color:#5C4A32;line-height:1.7;max-width:500px;margin:0 auto;">Now play matchmaker! Pair each woman with the man you think she\'d be best suited for. Click a woman, then click a man to pair them. One woman will be left unmatched.</p></div><div class="match-grid"><div class="match-col"><div class="match-col-title" style="color:#8B3A5E;">Women</div>' + wH + '</div><div class="connector"><div class="connector-heart">\u2665</div></div><div class="match-col"><div class="match-col-title" style="color:#2E5077;">Men</div>' + mH + '</div></div><div style="text-align:center;margin-top:28px;"><div style="font-size:13px;color:#8B7355;margin-bottom:12px;">' + pC + ' of 5 pairs made' + (pC >= 5 ? ' \u2713' : '') + '</div><button class="btn-gold" style="width:auto;padding:14px 40px;" id="finishBtn"' + ((!aP || !timerUnlocked) ? ' disabled' : '') + '>See My Results ' + ORN + '</button></div></div>';
+    if (nT) { startTimer(0, 'Match', 'Think it through', function() { var fb = document.getElementById('finishBtn'); if (fb && Object.keys(state.matchSelections).length >= 5) fb.disabled = false; }); }
+    document.querySelectorAll('[data-woman]').forEach(function(b) { b.addEventListener('click', function() { state.selectedWoman = state.selectedWoman === b.dataset.woman ? null : b.dataset.woman; render(); }); });
+    document.querySelectorAll('[data-man]').forEach(function(b) { b.addEventListener('click', function() { if (!state.selectedWoman) return; doMatch(state.selectedWoman, b.dataset.man); state.selectedWoman = null; render(); }); });
+    document.getElementById('finishBtn').addEventListener('click', function() { if (aP && timerUnlocked) transition(function() { state.phase = 'summary'; }); });
+    return;
+  }
+
+  if (s.phase === 'summary') {
+    clearTimer();
+    var uW = WOMEN.filter(function(w) { return !s.matchSelections[w.id]; });
+    var wR = WOMEN.map(function(w) { return '<div class="summary-row"><span class="sname">' + esc(w.name) + '</span><span class="schoice">' + esc(s.choices[w.id] || '(none)') + '</span></div>'; }).join('');
+    var mR = MEN.map(function(m) { return '<div class="summary-row"><span class="sname">' + esc(m.name) + ' <span class="swealth">' + m.wealth + '</span></span><span class="schoice">' + esc(s.choices[m.id] || '(none)') + '</span></div>'; }).join('');
+    var pR = WOMEN.filter(function(w) { return s.matchSelections[w.id]; }).map(function(w) { var m = MEN.find(function(m) { return m.id === s.matchSelections[w.id]; }); return '<div class="pair-row"><span class="pw">' + esc(w.name) + '</span><span class="pamp">&amp;</span><span class="pm">' + (m ? esc(m.name) : '') + '</span></div>'; }).join('');
+    var uL = ''; if (uW.length > 0) uL = '<div style="text-align:center;font-size:13px;color:#8B7355;font-style:italic;margin-top:8px;">Unmatched: ' + uW.map(function(w) { return esc(w.name); }).join(', ') + '</div>';
+    app.innerHTML = '<div class="container" style="max-width:640px;margin-top:20px;">' + titleHTML() + '<div class="card" style="max-width:640px;padding:36px 32px;"><div style="text-align:center;margin-bottom:24px;"><div style="font-size:13px;color:#C5963A;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Results for</div><div style="font-family:\'Playfair Display\',Georgia,serif;font-size:24px;font-weight:700;">' + esc(s.name) + '</div></div><div style="margin-bottom:28px;"><div class="section-title" style="color:#8B3A5E;">' + ORN + ' Women ' + ORN + '</div>' + wR + '</div><div style="margin-bottom:28px;"><div class="section-title" style="color:#2E5077;">' + ORN + ' Men ' + ORN + '</div>' + mR + '</div><div style="margin-bottom:28px;"><div class="section-title" style="color:#5C4A32;">' + ORN + ' My Matchmaking ' + ORN + '</div>' + pR + uL + '</div><button class="btn-gold" id="screenshotBtn" style="font-size:15px;">\uD83D\uDCCB Copy Screenshot to Clipboard</button><p style="font-size:12px;color:#8B7355;text-align:center;margin-top:10px;">After copying, go to Padlet and paste (Ctrl+V / Cmd+V) to share your results.</p></div><div style="text-align:center;margin-top:24px;"><button class="btn-outline" id="restartBtn">Start Over</button></div></div>';
+    document.getElementById('screenshotBtn').addEventListener('click', generateScreenshot);
+    document.getElementById('restartBtn').addEventListener('click', function() { state = {phase:'name',name:'',charIndex:0,guesses:{},currentGuess:'',choices:{},matchSelections:{},selectedWoman:null,copied:false}; render(); });
+    return;
+  }
+}
+
+function transition(cb) { var inner = document.getElementById('app').firstElementChild; if (inner) inner.classList.add('fade-out'); setTimeout(function() { cb(); render(); }, 250); }
+function submitGuess() { if (!state.currentGuess.trim() || !timerUnlocked) return; var ch = ALL_CHARS[state.charIndex]; state.guesses[ch.id] = state.currentGuess.trim(); state.currentGuess = ''; if (state.charIndex < ALL_CHARS.length - 1) transition(function() { state.charIndex++; }); else transition(function() { state.charIndex = 0; state.phase = 'detailed'; }); }
+function submitChoice(c) { if (!timerUnlocked) return; var ch = ALL_CHARS[state.charIndex]; state.choices[ch.id] = c; if (state.charIndex < ALL_CHARS.length - 1) transition(function() { state.charIndex++; }); else transition(function() { state.phase = 'matchmaking'; }); }
+function doMatch(wId, mId) { var keys = Object.keys(state.matchSelections); for (var i = 0; i < keys.length; i++) { if (state.matchSelections[keys[i]] === mId) delete state.matchSelections[keys[i]]; } if (state.matchSelections[wId] === mId) delete state.matchSelections[wId]; else state.matchSelections[wId] = mId; }
+
+async function generateScreenshot() {
+  var canvas = document.getElementById('screenshotCanvas'), ctx = canvas.getContext('2d'), W = 900, padding = 40, lineH = 26;
+  var tL = 6+2+WOMEN.length*2+2+MEN.length*2+2+2+Object.keys(state.matchSelections).length*2+2;
+  var H = Math.max(700, padding*2+tL*lineH+80);
+  canvas.width=W*2; canvas.height=H*2; ctx.scale(2,2);
+  ctx.fillStyle='#FBF5E8'; ctx.fillRect(0,0,W,H);
+  var grad=ctx.createRadialGradient(W*.2,H*.3,0,W*.2,H*.3,W*.6); grad.addColorStop(0,'rgba(197,150,58,.05)'); grad.addColorStop(1,'transparent'); ctx.fillStyle=grad; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#C5963A'; ctx.lineWidth=3; ctx.strokeRect(16,16,W-32,H-32); ctx.strokeStyle='#E8DCC8'; ctx.lineWidth=1; ctx.strokeRect(22,22,W-44,H-44);
+  var y=padding+20;
+  function dt(t,x,sz,c,fs,a){ctx.fillStyle=c||'#2C1810';ctx.font=(fs?fs+' ':'')+sz+'px Georgia,serif';ctx.textAlign=a||'left';ctx.fillText(t,x,y)}
+  dt('Pride & Prejudice',W/2,28,'#2C1810','bold','center');y+=34;
+  dt('The Disney Universe Bracket',W/2,18,'#8B6914','','center');y+=30;
+  dt(state.name,W/2,16,'#5C4A32','italic','center');y+=40;
+  ctx.strokeStyle='#C5963A';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(padding+40,y);ctx.lineTo(W-padding-40,y);ctx.stroke();y+=25;
+  dt('\u2726  WOMEN  \u2726',W/2,13,'#8B3A5E','bold','center');y+=28;
+  WOMEN.forEach(function(w){dt(w.name,padding+30,14,'#2C1810','bold','left');ctx.fillStyle='#8B6914';ctx.font='14px Georgia,serif';ctx.textAlign='right';ctx.fillText(state.choices[w.id]||'(none)',W-padding-30,y);y+=lineH});y+=15;
+  dt('\u2726  MEN  \u2726',W/2,13,'#2E5077','bold','center');y+=28;
+  MEN.forEach(function(m){dt(m.name+'  '+m.wealth,padding+30,14,'#2C1810','bold','left');ctx.fillStyle='#8B6914';ctx.font='14px Georgia,serif';ctx.textAlign='right';ctx.fillText(state.choices[m.id]||'(none)',W-padding-30,y);y+=lineH});y+=20;
+  ctx.strokeStyle='#C5963A';ctx.beginPath();ctx.moveTo(padding+40,y);ctx.lineTo(W-padding-40,y);ctx.stroke();y+=25;
+  dt('\u2726  MY MATCHMAKING  \u2726',W/2,13,'#5C4A32','bold','center');y+=28;
+  WOMEN.forEach(function(w){var mId=state.matchSelections[w.id];var man=MEN.find(function(m){return m.id===mId});if(man){ctx.textAlign='center';ctx.fillStyle='#2C1810';ctx.font='14px Georgia,serif';ctx.fillText(w.name+'  &  '+man.name,W/2,y);y+=lineH}});
+  var um=WOMEN.filter(function(w){return!state.matchSelections[w.id]});if(um.length>0){y+=8;ctx.textAlign='center';ctx.fillStyle='#8B7355';ctx.font='italic 13px Georgia,serif';ctx.fillText('Unmatched: '+um.map(function(w){return w.name}).join(', '),W/2,y)}
+  var btn=document.getElementById('screenshotBtn');
+  try{var blob=await new Promise(function(r){canvas.toBlob(r,'image/png')});await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);btn.textContent='\u2713 Copied to Clipboard! Paste on Padlet!';btn.style.background='#4A7C59';setTimeout(function(){btn.textContent='\uD83D\uDCCB Copy Screenshot to Clipboard';btn.style.background='linear-gradient(135deg,#8B6914,#C5963A)'},3000)}catch(e){var link=document.createElement('a');link.download='pride-prejudice-bracket-'+state.name.replace(/\s+/g,'-')+'.png';link.href=canvas.toDataURL('image/png');link.click();btn.textContent='\u2713 Downloaded! Upload to Padlet!';btn.style.background='#4A7C59';setTimeout(function(){btn.textContent='\uD83D\uDCCB Copy Screenshot to Clipboard';btn.style.background='linear-gradient(135deg,#8B6914,#C5963A)'},3000)}
+}
+
+render();
+
+</script>
+</body>
+</html>
